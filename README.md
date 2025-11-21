@@ -40,8 +40,8 @@ A modern, type-safe Next.js application for managing 401(k) contributions and pr
 
 1. Clone the repository:
 ```bash
-git clone <repository-url>
-cd 401kPlanner
+git clone https://github.com/cychan2047/401k-contribution-planner.git
+cd 401k-contribution-planner
 ```
 
 2. Install dependencies:
@@ -66,7 +66,7 @@ npm start
 ## Project Structure
 
 ```
-401kPlanner/
+401k-contribution-planner/
 ├── src/
 │   ├── app/
 │   │   ├── api/
