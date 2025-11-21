@@ -117,10 +117,12 @@ Updates the contribution type and value.
 **Request Body:**
 ```json
 {
-  "contributionType": "PERCENT" | "FIXED",
-  "contributionValue": number
+  "contributionType": "PERCENT",
+  "contributionValue": 2.6
 }
 ```
+
+**Note:** `contributionType` must be either `"PERCENT"` or `"FIXED"`. `contributionValue` should be a number (percentage 0-100 for PERCENT mode, or dollar amount for FIXED mode).
 
 **Response:**
 Returns the updated user data object.
