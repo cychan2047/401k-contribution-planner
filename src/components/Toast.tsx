@@ -26,12 +26,12 @@ export default function Toast({
     return () => clearTimeout(timer);
   }, [onClose, duration]);
 
-  const bgColor = type === "success" ? "bg-green-500" : "bg-red-500";
+  const bgColor = type === "success" ? "bg-green-accent" : "bg-red-500";
   const Icon = type === "success" ? CheckCircle2 : XCircle;
 
   return (
     <div
-      className={`fixed bottom-4 right-4 ${bgColor} text-white px-6 py-4 rounded-lg shadow-lg flex items-center gap-3 min-w-[300px] max-w-md z-50 animate-in slide-in-from-bottom-5`}
+      className={`fixed bottom-4 right-4 ${bgColor} text-white px-6 py-4 rounded-lg shadow-soft-md flex items-center gap-3 min-w-[300px] max-w-md z-[100] animate-in`}
     >
       <Icon className="w-5 h-5 flex-shrink-0" />
       <span className="flex-1 font-medium">{message}</span>

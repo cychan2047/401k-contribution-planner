@@ -1,6 +1,11 @@
 {
-  "salary": 120000,
+  "salary": 104000,
   "ytd": 10500,
-  "contributionType": "PERCENT",
-  "contributionValue": 15
+  "currentTotalBalance": 58500,
+  "contributionType": "FIXED",
+  "contributionValue": 1000,
+  "payFrequency": 26,
+  "remainingPaychecks": 5,
+  "ytdEmployerMatch": 2000,
+  "grossPayPerPeriod": 4000
 }

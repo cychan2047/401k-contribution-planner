@@ -1,14 +1,24 @@
 # 401(k) Contribution Planner
 
-A modern, type-safe Next.js application for managing 401(k) contributions and projecting retirement savings.
+A modern, type-safe Next.js application for managing 401(k) contributions and projecting retirement savings with time-aware calculations and comprehensive financial modeling.
 
 ## Features
 
-- **Visualization**: Display current salary and year-to-date contributions
-- **Flexible Controls**: Toggle between percentage-based and fixed-amount contributions
-- **Real-time Projections**: Calculate retirement savings at age 65 with compound interest
-- **Persistent Storage**: Save settings to local JSON database
-- **Professional UI**: Clean, fintech-inspired design with smooth interactions
+### Core Functionality
+- **Time-Aware Projections**: Accurate year-end calculations based on remaining paychecks in the current year
+- **Flexible Contribution Modes**: Toggle between percentage-based (% of paycheck) and fixed-amount contributions
+- **Real-Time Calculations**: Instant updates as you adjust contribution settings
+- **Comprehensive Breakdown**: Detailed breakdown showing YTD + future contributions with transparent math
+- **IRS Compliance**: Automatic enforcement of IRS contribution limits ($23,500 for 2025) and Section 415(c) total limit ($70,000)
+- **Employer Match Modeling**: Accurate employer match calculations (100% match up to 4% of gross pay)
+- **Retirement Projections**: Compound interest calculations projecting savings to retirement age
+
+### User Experience
+- **Professional UI**: Clean, fintech-inspired design with consistent styling
+- **Interactive Tooltips**: Detailed calculation breakdowns for transparency
+- **Responsive Design**: Works seamlessly on desktop and mobile devices
+- **Toast Notifications**: Visual feedback for save operations
+- **Smart Defaults**: Automatic conversion between percentage and fixed amount modes
 
 ## Tech Stack
 
@@ -28,17 +38,23 @@ A modern, type-safe Next.js application for managing 401(k) contributions and pr
 
 ### Installation
 
-1. Install dependencies:
+1. Clone the repository:
+```bash
+git clone <repository-url>
+cd 401kPlanner
+```
+
+2. Install dependencies:
 ```bash
 npm install
 ```
 
-2. Start the development server:
+3. Start the development server:
 ```bash
 npm run dev
 ```
 
-3. Open [http://localhost:3000](http://localhost:3000) in your browser
+4. Open [http://localhost:3000](http://localhost:3000) in your browser
 
 ### Building for Production
 
@@ -54,21 +70,23 @@ npm start
 ├── src/
 │   ├── app/
 │   │   ├── api/
-│   │   │   ├── user/          # GET user data
-│   │   │   └── contribution/  # POST update contribution
+│   │   │   ├── user/          # GET user data endpoint
+│   │   │   └── contribution/  # POST update contribution endpoint
 │   │   ├── layout.tsx
-│   │   ├── page.tsx
+│   │   ├── page.tsx           # Main application page
 │   │   └── globals.css
 │   ├── components/
-│   │   ├── ContributionCard.tsx
-│   │   ├── ProjectionChart.tsx
-│   │   └── Toast.tsx
+│   │   ├── ContributionCard.tsx    # Contribution settings UI
+│   │   ├── ProjectionChart.tsx     # Retirement projection display
+│   │   └── Toast.tsx               # Notification component
 │   ├── hooks/
-│   │   └── useUserData.ts
+│   │   └── useUserData.ts          # Custom hook for data management
 │   ├── lib/
-│   │   └── db.ts              # JSON database utilities
+│   │   ├── calculations.ts         # Financial calculation logic
+│   │   ├── db.ts                   # JSON database utilities
+│   │   └── format.ts               # Number formatting utilities
 │   └── data/
-│       └── db.json            # Local database file
+│       └── db.json                 # Local database file
 ├── package.json
 └── README.md
 ```
@@ -76,7 +94,22 @@ npm start
 ## API Endpoints
 
 ### GET `/api/user`
-Returns the current user data including salary, YTD contributions, and contribution settings.
+Returns the current user data including salary, YTD contributions, contribution settings, and pay period information.
+
+**Response:**
+```json
+{
+  "salary": 104000,
+  "ytd": 10500,
+  "currentTotalBalance": 58500,
+  "contributionType": "PERCENT",
+  "contributionValue": 2.6,
+  "payFrequency": 26,
+  "remainingPaychecks": 5,
+  "ytdEmployerMatch": 2000,
+  "grossPayPerPeriod": 4000
+}
+```
 
 ### POST `/api/contribution`
 Updates the contribution type and value.
@@ -96,37 +129,70 @@ Returns the updated user data object.
 
 ```typescript
 interface UserData {
-  salary: number;
-  ytd: number;
+  salary: number;                    // Annual salary
+  ytd: number;                       // Year-to-date user contributions
+  currentTotalBalance: number;       // Previous year-end account balance
   contributionType: "PERCENT" | "FIXED";
-  contributionValue: number;
+  contributionValue: number;         // Percentage (0-100) or fixed amount per paycheck
+  payFrequency: number;             // Number of pay periods per year (typically 26)
+  remainingPaychecks: number;        // Remaining paychecks in current year
+  ytdEmployerMatch: number;          // Year-to-date employer match
+  grossPayPerPeriod: number;         // Gross pay per paycheck
 }
 ```
 
-## Features in Detail
+## Key Features in Detail
+
+### Time-Aware Calculations
+The application uses sophisticated time-aware logic to accurately project year-end totals:
+- **Projected Year-End User Contribution**: YTD + (Per-Paycheck Amount × Remaining Paychecks)
+- **Projected Year-End Employer Match**: YTD Match + (Matchable Amount × Remaining Paychecks)
+- **Annualized Rates**: For retirement projections, uses full annual rates (not partial year totals)
 
 ### Contribution Settings
 - Toggle between percentage-based (% of paycheck) and fixed-amount contributions
 - Interactive slider and number input for precise control
-- Real-time calculation of estimated annual contribution
+- Real-time calculation of projected year-end totals
+- Smart conversion between modes (maintains equivalent contribution amount)
+- IRS limit warnings when contributions exceed $23,500
 
 ### Retirement Projection
-- Calculates projected savings at age 65 using compound interest
-- Shows total contributions vs. estimated growth
-- Displays key assumptions (age, return rate, contribution amount)
+- **4-Part Breakdown**:
+  1. Current Balance (includes YTD contributions and match)
+  2. Future User Contributions (remaining 2025 + future years)
+  3. Future Employer Match (remaining 2025 + future years)
+  4. Estimated Market Growth (compound interest earnings)
+- Compound interest calculation using 7% annual return
+- Monthly contribution modeling for accuracy
+- Transparent tooltips showing calculation formulas
 
-### Visual Feedback
-- Toast notifications for successful saves and errors
-- Smooth animations and transitions
-- Professional fintech-inspired design
+### Financial Compliance
+- **IRS Contribution Limit**: $23,500 (2025 limit) for user contributions
+- **Section 415(c) Limit**: $70,000 (2025 limit) for total contributions (user + employer)
+- Automatic capping in calculations
+- Visual warnings for limit exceedances
+
+### Employer Match Logic
+- 100% match of user contributions
+- Cap: 4% of gross pay per paycheck
+- Formula: `min(userContribution, grossPayPerPeriod × 0.04)`
 
 ## Development Notes
 
 - The database file (`src/data/db.json`) is created automatically if it doesn't exist
-- Default seed data includes: $120,000 salary, $10,500 YTD, 5% contribution
+- Default seed data: $104,000 salary, $10,500 YTD user contributions, $2,000 YTD employer match
 - The projection assumes 7% annual return and bi-weekly paychecks (26 per year)
+- Current age: 30, Target retirement age: 65 (configurable)
+- All calculations respect IRS limits and Section 415(c) regulations
+
+## Code Quality
+
+- **Type Safety**: Full TypeScript implementation with strict type checking
+- **Code Organization**: Clear separation of concerns (calculations, formatting, UI)
+- **Error Handling**: Comprehensive error handling in API routes and hooks
+- **Performance**: Optimized calculations and efficient React rendering
+- **Accessibility**: Semantic HTML and proper ARIA labels
 
 ## License
 
 This project is created for technical assessment purposes.
-

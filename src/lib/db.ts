@@ -4,8 +4,13 @@ import path from "path";
 export interface UserData {
   salary: number;
   ytd: number;
+  currentTotalBalance: number;
   contributionType: "PERCENT" | "FIXED";
   contributionValue: number;
+  payFrequency: number;
+  remainingPaychecks: number;
+  ytdEmployerMatch: number;
+  grossPayPerPeriod: number;
 }
 
 const DB_PATH = path.join(process.cwd(), "src/data/db.json");
@@ -21,10 +26,15 @@ export async function readData(): Promise<UserData> {
     // If file doesn't exist, return default data
     if ((error as NodeJS.ErrnoException).code === "ENOENT") {
       const defaultData: UserData = {
-        salary: 120000,
+        salary: 104000,
         ytd: 10500,
+        currentTotalBalance: 58500,
         contributionType: "PERCENT",
         contributionValue: 5,
+        payFrequency: 26,
+        remainingPaychecks: 5,
+        ytdEmployerMatch: 2000,
+        grossPayPerPeriod: 4000,
       };
       // Create the file with default data
       await writeData(defaultData);

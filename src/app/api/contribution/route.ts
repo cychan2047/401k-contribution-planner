@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { readData, writeData, UserData } from "@/lib/db";
+import { getMaxContributionValue } from "@/lib/calculations";
 
 export async function POST(request: Request) {
   try {
@@ -21,6 +22,9 @@ export async function POST(request: Request) {
       );
     }
 
+    // Read current data
+    const currentData = await readData();
+
     // Additional validation
     if (contributionType === "PERCENT" && contributionValue > 100) {
       return NextResponse.json(
@@ -28,9 +32,6 @@ export async function POST(request: Request) {
         { status: 400 }
       );
     }
-
-    // Read current data
-    const currentData = await readData();
 
     // Update with new values
     const updatedData: UserData = {
